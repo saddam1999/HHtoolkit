@@ -1,0 +1,606 @@
+#!/bin/bash
+
+CE="\033[0m"
+RS="\033[1;31m"
+YS="\033[1;33m"
+N="\033[1;37m"
+
+if [[ $EUID -ne 0 ]]
+then
+   sleep 1
+   echo -e "["$RS"*"$CE"] "$RS"This script must be run as root!"$CE"" 1>&2
+   sleep 1
+   exit
+fi
+
+{
+chattr -i /dev/config
+chattr -i /dev/config/config.txt
+chattr -i /dev/config/configure.txt
+} &> /dev/null
+
+{
+mkdir /dev/config
+echo 0 >> /dev/config/config.txt
+echo 1 >> /dev/config/configure.txt
+} &> /dev/null
+
+{
+chattr +i /dev/config
+chattr +i /dev/config/config.txt
+chattr +i /dev/config/configure.txt
+} &> /dev/null
+
+
+{
+SERSE="$( cat /dev/config/config.txt | head -n 1 )"
+ESRES="$( cat /dev/config/configure.txt | head -n 1 )"
+} &> /dev/null
+
+if [[ "$SERSE" != "$ESRES" ]]
+then
+
+{
+ASESR="$(ping -c 1 -q www.google.com >&/dev/null; echo $?)"
+KEYEK="$( cat /etc/hhtools/root/service/hhtkey.txt )"
+} &> /dev/null
+
+if [[ "$ASESR" = 0 ]]
+then 
+
+KEYKE="$( timeout -s SIGTERM 40 curl "https://pastebin.com/raw/k8D7RBtC" 2>/dev/null )"
+
+if [[ "$KEYEK" != "$KEYKE" ]]
+then
+
+sleep 1
+echo -e "["$RS"*"$CE"] "$RS"Failed to open session for hhtmod!"$CE""
+
+sleep 1
+exit
+
+fi
+
+else
+sleep 1
+echo -e "["$RS"*"$CE"] "$RS"No Internet connection!"$CE""
+sleep 1
+exit
+fi
+fi
+
+if [[ $1 = "--help" || $1 = "-h" ]]
+then
+echo -e "Usage: hhtmod [option] <arguments>"
+echo -e
+echo -e "  -i, --install         Install hhtools modules."
+echo -e "  -t, --take    <name>  Take a new hhtools modules snapshot."
+echo -e "  -r, --restore <name>  Restore saved hhtools modules snapshot."
+echo -e "  -d, --delete  <name>  Delete saved hhtools modules snapshot."
+echo -e "  -u, --uninstall       Uninstall hhtools modules."
+echo -e "  -h, --help            Give this help list."
+exit
+
+elif [[ $1 = "--restore" || $1 = "-r" ]]
+then
+if [[ $2 = "" ]]
+then
+echo -e "Usage: hhtmod $1 <name>"
+exit
+fi
+if [[ -d /etc/hhtools/modules ]]
+then
+if [[ ! -d /etc/hhtools/modules/snapshots ]]
+then
+sleep 2
+echo -e "Error, snapshots directory is not found!"
+sleep 2
+echo -e "Making /etc/hhtools/modules/snapshots..."
+{
+chattr -i /etc/hhtools
+mkdir /etc/hhtools/modules/snapshots
+chattr +i /etc/hhtools
+}
+sleep 0.5
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 1
+fi
+if [[ -d /etc/hhtools/modules/snapshots/$2 ]]
+then
+clear
+sleep 3
+echo -e "Well, we are going to start!"
+sleep 2
+echo -e "\033[4;32mPreparing to restore snapshot:\033[0m $2"
+sleep 1
+printf '\033]2;Restoring...\a'
+
+function ProgressBark {
+
+    let _progress=(${1}*100/${2}*100)/100
+    let _done=(${_progress}*4)/10
+    let _left=40-$_done
+
+    _fill=$(printf "%${_done}s")
+    _empty=$(printf "%${_left}s")
+
+                         
+        
+printf "\rRestoring (${_progress}%%)"
+
+}
+
+
+_start=1
+
+_end=100
+
+for number in $(seq ${_start} ${_end})
+do
+    sleep 0.5
+    ProgressBark ${number} ${_end}
+done
+
+sleep 5
+echo -e
+sleep 0.5
+{
+chatt -i /etc/hhtools
+rm -r /etc/hhtools/modules/hht
+cp -r /etc/hhtools/modules/snapshots/$2/hht /etc/hhtools/modules
+chmod +x /etc/hhtools/modules/hht/hht1
+chmod +x /etc/hhtools/modules/hht/hht2
+chmod +x /etc/hhtools/modules/hht/hht3
+chmod +x /etc/hhtools/modules/hht/hht31
+chmod +x /etc/hhtools/modules/hht/hht21
+chmod +x /etc/hhtools/modules/hht/hht4
+chmod +x /etc/hhtools/modules/hht/hht41
+chmod +x /etc/hhtools/modules/hht/hht42
+chmod +x /etc/hhtools/modules/hht/hht43
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 2
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 0.5
+echo -e "Finishing and exiting..."
+sleep 5
+exit
+else
+sleep 2
+echo -e "Error, snapshot $2 is not found!"
+sleep 2
+exit
+fi
+else
+sleep 2
+echo -e "Error, hhtools modules is not installed!"
+sleep 2
+exit
+fi
+
+elif [[ $1 = "--delete" || $1 = "-d" ]]
+then
+if [[ $2 = "" ]]
+then
+echo -e "Usage: hhtmod $1 <name>"
+exit
+fi
+if [[ -d /etc/hhtools/modules ]]
+then
+if [[ ! -d /etc/hhtools/modules/snapshots ]]
+then
+sleep 2
+echo -e "Error, snapshots directory is not found!"
+sleep 2
+echo -e "Making /etc/hhtools/modules/snapshots..."
+{
+chattr -i /etc/hhtools
+mkdir /etc/hhtools/modules/snapshots
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 1
+fi
+if [[ -d /etc/hhtools/modules/snapshots/$2 ]]
+then
+clear
+sleep 3
+echo -e "Well, we are going to start!"
+sleep 2
+echo -e "\033[4;32mPreparing to delete snapshot:\033[0m $2"
+sleep 1
+printf '\033]2;Deleting...\a'
+
+function ProgressBarkt {
+
+    let _progress=(${1}*100/${2}*100)/100
+    let _done=(${_progress}*4)/10
+    let _left=40-$_done
+
+    _fill=$(printf "%${_done}s")
+    _empty=$(printf "%${_left}s")
+
+                         
+        
+printf "\rDeleting (${_progress}%%)"
+
+}
+
+
+_start=1
+
+_end=100
+
+for number in $(seq ${_start} ${_end})
+do
+    sleep 0.5
+    ProgressBarkt ${number} ${_end}
+done
+
+sleep 5
+echo -e
+sleep 0.5
+{
+chattr -i /etc/hhtools
+rm -rf /etc/hhtools/modules/snapshots/$2
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 2
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 0.5
+echo -e "Finishing and exiting..."
+sleep 5
+exit
+else
+sleep 2
+echo -e "Error, snapshot $2 is not found!"
+sleep 2
+exit
+fi
+else
+sleep 2
+echo -e "Error, hhtools modules is not installed!"
+sleep 2
+exit
+fi
+
+elif [[ $1 = "--take" || $1 = "-t" ]]
+then
+if [[ $2 = "" ]]
+then
+echo -e "Usage: hhtmod $1 <name>"
+exit
+fi
+if [[ -d /etc/hhtools/modules ]]
+then
+if [[ ! -d /etc/hhtools/modules/snapshots ]]
+then
+sleep 2
+echo -e "Error, snapshots directory is not found!"
+sleep 2
+echo -e "Making /etc/hhtools/modules/snapshots..."
+{
+chattr -i /etc/hhtools
+mkdir /etc/hhtools/modules/snapshots
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 1
+fi
+if [[ -d /etc/hhtools/modules/snapshots/$2 ]]
+then
+sleep 2
+echo -e "Error, snapshot $2 is already taken!"
+sleep 2
+exit
+else
+clear
+sleep 3
+echo -e "Well, we are going to start!"
+sleep 2
+echo -e "\033[4;32mPreparing to take snapshot:\033[0m $2"
+sleep 1
+printf '\033]2;Taking...\a'
+
+function ProgressBarks {
+
+    let _progress=(${1}*100/${2}*100)/100
+    let _done=(${_progress}*4)/10
+    let _left=40-$_done
+
+    _fill=$(printf "%${_done}s")
+    _empty=$(printf "%${_left}s")
+
+                         
+        
+printf "\rTaking (${_progress}%%)"
+
+}
+
+
+_start=1
+
+_end=100
+
+for number in $(seq ${_start} ${_end})
+do
+    sleep 0.5
+    ProgressBarks ${number} ${_end}
+done
+
+sleep 5
+echo -e
+sleep 0.5
+echo -e "Making /etc/hhtools/modules/snapshots/$2..."
+{
+chattr -i /etc/hhtools
+mkdir /etc/hhtools/modules/snapshots/$2
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "Trying to take snapshot of /etc/hhtools/modules/hht..."
+{
+chattr -i /etc/hhtools
+cp -r /etc/hhtools/modules/hht /etc/hhtools/modules/snapshots/$2
+chmod +t /etc/hhtools/modules/snapshots
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 0.5
+echo -e "Snapshot: \033[4;32m/etc/hhtools/modules/snapshots/$2/hht\033[0m"
+sleep 0.5
+echo -e "Finishing and exiting..."
+sleep 5
+exit
+fi
+else
+sleep 2
+echo -e "Error, hhtools modules is not installed!"
+sleep 2
+exit
+fi
+
+elif [[ $1 = "--uninstall" || $1 = "-u" ]]
+then
+if [[ -d /etc/hhtools/modules ]]
+then
+clear
+sleep 3
+echo -e "Well, we are going to start!"
+sleep 2
+echo -e "\033[4;32mPreparing to uninstall\033[0m"
+sleep 1
+printf '\033]2;Uninstalling...\a'
+
+function ProgressBarkty {
+
+    let _progress=(${1}*100/${2}*100)/100
+    let _done=(${_progress}*4)/10
+    let _left=40-$_done
+
+    _fill=$(printf "%${_done}s")
+    _empty=$(printf "%${_left}s")
+
+                         
+        
+printf "\rUninstalling (${_progress}%%)"
+
+}
+
+
+_start=1
+
+_end=100
+
+for number in $(seq ${_start} ${_end})
+do
+    sleep 0.2
+    ProgressBarkty ${number} ${_end}
+done
+
+sleep 5
+echo -e
+sleep 0.3
+{
+chattr -i /etc/hhtools
+rm -rf /etc/hhtools/modules
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 2
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 0.5
+echo -e "Finishing and exiting..."
+sleep 5
+exit
+else
+sleep 2
+echo -e "Error, hhtools modules is not installed!"
+sleep 2
+exit
+fi
+
+
+elif [[ $1 = "--install" || $1 = "-i" ]]
+then
+if [[ -d /etc/hhtools/modules ]]
+then
+sleep 2
+echo -e "Error, hhtools modules is already installed!"
+sleep 2
+exit
+fi
+clear
+sleep 3
+echo -e "Well, we are going to start!"
+sleep 2
+echo -e "Making /etc/hhtools/modules..."
+{
+chattr -i /etc/hhtools
+mkdir /etc/hhtools/modules
+mkdir /etc/hhtools/modules/hht
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "\033[4;32mPreparing to install...\033[0m"
+sleep 1
+printf '\033]2;Installing...\a'
+
+function ProgressBar {
+
+    let _progress=(${1}*100/${2}*100)/100
+    let _done=(${_progress}*4)/10
+    let _left=40-$_done
+
+    _fill=$(printf "%${_done}s")
+    _empty=$(printf "%${_left}s")
+
+                         
+        
+printf "\rInstalling (${_progress}%%)"
+
+}
+
+
+_start=1
+
+_end=100
+
+for number in $(seq ${_start} ${_end})
+do
+    sleep 0.2
+    ProgressBar ${number} ${_end}
+done
+
+sleep 5
+echo -e
+sleep 0.3
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 1
+chmod +x /root/hhtools/hht/hht1
+chmod +x /root/hhtools/hht/hht2
+chmod +x /root/hhtools/hht/hht3
+chmod +x /root/hhtools/hht/hht21
+chmod +x /root/hhtools/hht/hht31
+chmod +x /root/hhtools/hht/hht4
+chmod +x /root/hhtools/hht/hht41
+chmod +x /root/hhtools/hht/hht42
+chmod +x /root/hhtools/hht/hht43
+sleep 0.5 
+echo -e "Setting up permissions..."
+sleep 0.5
+echo -e "Moving hhtools modules to /etc/hhtools/modules/hht..."
+sleep 0.5
+{
+chattr -i /etc/hhtools
+cp /root/hhtools/hht/hht1 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht2 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht3 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht21 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht31 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht4 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht41 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht42 /etc/hhtools/modules/hht
+cp /root/hhtools/hht/hht43 /etc/hhtools/modules/hht
+chmod +x /etc/hhtools/modules/hht/hht1
+chmod +x /etc/hhtools/modules/hht/hht2
+chmod +x /etc/hhtools/modules/hht/hht3
+chmod +x /etc/hhtools/modules/hht/hht21
+chmod +x /etc/hhtools/modules/hht/hht31
+chmod +x /etc/hhtools/modules/hht/hht4
+chmod +x /etc/hhtools/modules/hht/hht41
+chmod +x /etc/hhtools/modules/hht/hht42
+chmod +x /etc/hhtools/modules/hht/hht43
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "hhtools modules moved to /etc/hhtools/modules/hht with success!"
+sleep 1
+echo -e "Cleaning caches..."
+sleep 3
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 0.5
+echo -e "Saving to /etc/hhtools/modules/.config..."
+echo hht1 >> /etc/hhtools/modules/.config
+echo hht2 >> /etc/hhtools/modules/.config
+echo hht3 >> /etc/hhtools/modules/.config
+echo hht21 >> /etc/hhtools/modules/.config
+echo hht31 >> /etc/hhtools/modules/.config
+sleep 0.5
+echo -e "Saved to /etc/hhtools/modules/.config..."
+sleep 0.5
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 3
+echo -e "\033[4;32mPreparing to take snapshot:\033[0m default_snapshot"
+sleep 1
+echo -e "Making /etc/hhtools/modules/snapshots..."
+mkdir /etc/hhtools/modules/snapshots
+sleep 0.5
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 1
+printf '\033]2;Taking...\a'
+
+function ProgressBarksa {
+
+    let _progress=(${1}*100/${2}*100)/100
+    let _done=(${_progress}*4)/10
+    let _left=40-$_done
+
+    _fill=$(printf "%${_done}s")
+    _empty=$(printf "%${_left}s")
+
+                         
+        
+printf "\rTaking (${_progress}%%)"
+
+}
+
+
+_start=1
+
+_end=100
+
+for number in $(seq ${_start} ${_end})
+do
+    sleep 0.5
+    ProgressBarksa ${number} ${_end}
+done
+
+sleep 5
+echo -e
+sleep 0.5
+echo -e "Making /etc/hhtools/modules/snapshots/default_snapshot..."
+{
+chattr -i /etc/hhtools
+mkdir /etc/hhtools/modules/snapshots/default_snapshot
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "Trying to take snapshot of /etc/hhtools/modules/hht..."
+{
+chattr -i /etc/hhtools
+cp -r /etc/hhtools/modules/hht /etc/hhtools/modules/snapshots/default_snapshot
+chmod +t /etc/hhtools/modules/snapshots
+chattr +i /etc/hhtools
+} &> /dev/null
+sleep 0.5
+echo -e "\033[4;32mSuccess!\033[0m"
+sleep 0.5
+echo -e "Snapshot: \033[4;32m/etc/hhtools/modules/snapshots/dafault_snapshot/hht\033[0m"
+sleep 0.5
+echo -e "Finishing and exiting..."
+sleep 5
+exit
+fi
+
+echo -e "Usage: hhtmod [option] <arguments>"
+echo -e
+echo -e "  -i, --install         Install hhtools modules."
+echo -e "  -t, --take    <name>  Take a new hhtools modules snapshot."
+echo -e "  -r, --restore <name>  Restore saved hhtools modules snapshot."
+echo -e "  -d, --delete  <name>  Delete saved hhtools modules snapshot."
+echo -e "  -u, --uninstall       Uninstall hhtools modules."
+echo -e "  -h, --help            Give this help list."
+exit
