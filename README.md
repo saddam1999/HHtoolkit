@@ -232,7 +232,7 @@ from the menu. This means you can grab a network handshake or download a new
 hacking tool like Pupy by just selecting from one of the menu options!
 ```
 
-![hhtools-yellow](https://user-images.githubusercontent.com/54115104/86511984-92c9c780-be06-11ea-9888-9179447529b8.png)
+
 
 ***
 
@@ -385,33 +385,6 @@ be restored and you will have to reinstall hhtools!
 ``` 
 ***
     
-# hhtools Framework protection
-
-![hhtools-login](https://user-images.githubusercontent.com/54115104/86511975-7f1e6100-be06-11ea-8476-a01324898eb2.png)
-
-* Do this using install.sh.
-
-```
-Create login and password using install.sh 
-(example: login: hhtools, password: sloothe)
-```
-
-* Do this when you are going to exit from hhtools.
-
-```
-When you are going to exit framework,
-exit with shortcuts - 0 or exit. 
-```
-
-* Do not do this when you are going to exit from hhtools.
-
-``` 
-Do not just close hhtools window and 
-do not exit from the hhtools Framework 
-using Ctrl-C or other exit signals!
-```
-
-***
 
 # hhtools Framework disclaimer
 
