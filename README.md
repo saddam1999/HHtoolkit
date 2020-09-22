@@ -5,9 +5,13 @@
   <a href="https://twitter.com/takadymp">
     <img src="https://img.shields.io/badge/Created%20By-The%20Hertz%20Project-blue">
   </a> 
+  
   <a href="https://wikipedia.org/wiki/Shell_script">
     <img src="https://img.shields.io/badge/language-shell-green.svg">
  </a>
+ 
+ <img src="https://img.shields.io/github/issues/entynetproject/ehtools.svg">
+
 
 
 ***
