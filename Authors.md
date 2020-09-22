@@ -1,5 +1,6 @@
 * [The Hertz Project Team](https://github.com/TheHertzProject)
 
+\n
 
 
 
@@ -41,5 +42,4 @@
 
 
 
-
-* [Ivan Nikolsky](https://github.com/This Guy Steals Code)
+* [Ivan Nikolsky] (https://github.com/ThisGuyStealsCode)
