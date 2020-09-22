@@ -8,9 +8,7 @@
   <a href="https://wikipedia.org/wiki/Shell_script">
     <img src="https://img.shields.io/badge/language-shell-green.svg">
  </a>
-<a href="https://github.com/entynetproject/ehtools">
-<img src="https://img.shields.io/badge/Based%20On-ehtools-red"></a>
-</p>
+
 
 ***
 
